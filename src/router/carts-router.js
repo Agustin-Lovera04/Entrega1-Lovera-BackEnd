@@ -23,10 +23,12 @@ router.get('/:cid', async(req, res) => {
     const cartId = parseInt(req.params.cid);
     const productsInCart =  await cartInstance.getProductsInCart(cartId);
   
-    if (Array.isArray(productsInCart)) {
+    if (productsInCart) {
+      console.log(productsInCart)
       res.status(200).json(productsInCart);
     } else {
-      res.status(404).json({ productsInCart });
+      console.log(productsInCart)
+      res.status(404).json({ error: 'Error al mostrar carrito' });
     }
     
   } catch (error) {

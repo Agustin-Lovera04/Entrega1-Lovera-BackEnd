@@ -6,26 +6,26 @@ export let ruta = path.join(__dirname,'archivos', 'products.json')
 
 export class ProductManager {
   constructor(ruta) {
-    this.products = []
     this.path = ruta
+    this.products = this.getProducts()
   }
 
   addProduct(title, description, code, price, stock, category, thumbnail) {
     if (!title || !description || !code || !price || !stock || !category) {
-      console.log("Faltan campos obligatorios para agregar el producto.")
-      return
+      return("Faltan campos obligatorios para agregar el producto.")
+
     }
     const validationProduct = this.products.find(
       (product) => product.code === code
     )
 
     if (validationProduct) {
-      console.log(
+      return(
         `El siguiente producto ya existe.
             Codigo: ${code}
             Nombre: ${title}`
       )
-      return
+      
     }
     let id = 1
     if (this.products.length > 0) {

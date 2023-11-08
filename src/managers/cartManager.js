@@ -65,26 +65,30 @@ export class CartManager{
       }
 
       addProductInCart(cartId, product) {
-        let carts = this.getCarts()
-        let getCartIndex = carts.findIndex((cart) => cart.id === cartId);
+        let getCartIndex = this.carts.findIndex((cart) => cart.id === cartId);
         if (getCartIndex === -1) {
           return "No existe un carrito con el ID proporcionado.";
         }
 
-        let productInCart = carts[getCartIndex].products.find((prod) => prod.product === product)
+        let productInCart = this.carts[getCartIndex].products.find((prod) => prod.product === product.id)
+
         if (!productInCart){
-          carts[getCartIndex].products.push({
+
+          this.carts[getCartIndex].products.push({
             product: product.id, 
             quantity: 1
           })
-          return carts[getCartIndex]
+
+          this.saveCartsToFile();
+
+          return this.carts[getCartIndex]
         }
 
         productInCart.quantity++
 
         this.saveCartsToFile();
       
-        return cart;
+        return this.carts[getCartIndex];
       }
       
       
