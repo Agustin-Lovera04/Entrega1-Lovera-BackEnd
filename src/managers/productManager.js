@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { __dirname } from "../utils.js"
-import path from 'path'
+import path, { parse } from 'path'
 
 export let ruta = path.join(__dirname,'archivos', 'products.json')
 
@@ -10,7 +10,8 @@ export class ProductManager {
     this.products = this.getProducts()
   }
 
-  addProduct(title, description, code, price, stock, category, thumbnail) {
+  addProduct(productData) {
+    const { title, description, code, price, stock, category, thumbnail } = productData;
     if (!title || !description || !code || !price || !stock || !category) {
       return("Faltan campos obligatorios para agregar el producto.")
 
@@ -47,6 +48,7 @@ export class ProductManager {
     this.products.push(newProduct)
     fs.writeFileSync(this.path, JSON.stringify(this.products, null, "\t"))
     console.log(`Producto "${title}" agregado.`)
+    return
   }
 
   getProducts() {
@@ -101,14 +103,16 @@ updateProduct(id, reqBody) {
 
 
 deleteProduct(id) {
-  let prodIndex = this.products.findIndex(product => product.id === id);
+  let productId = parseInt(id)
+  let prodIndex = this.products.findIndex(product => product.id === productId);
+  console.log(id)
   if (prodIndex === -1) {
     return console.log('Producto inexistente');
   }
 
-  let deleteProduct = this.products.splice(prodIndex, 1)
+  this.products.splice(prodIndex, 1)
 
   this.saveProducts(this.products)
 
-  return deleteProduct
+  return
 }}

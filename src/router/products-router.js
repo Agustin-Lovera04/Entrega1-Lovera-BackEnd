@@ -95,10 +95,20 @@ productPrueba.addProduct(
     "Sin imagen",
 );
 
+
+
+
+/* RECIBIMOS EN '/' (INDEX) Y POR CONSIGNA DEBEMOS LISTAR LOS PRODUCTS AQUI*/
 router.get('/', async (req, res) => {
   try {
     let products = await productPrueba.getProducts();
-    res.status(200).json(products);
+
+    if (req.query.limit) {
+      products = products.slice(0, req.query.limit);
+      console.log(`Se estableció un límite de: ${req.query.limit}`);
+    }
+
+    res.status(200).render('index', {products} );
   } catch (error) {
     res.status(500).json({
       error: "Error al obtener los productos",
@@ -106,25 +116,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/lm', async (req, res) => {
-  try {
-    let resultLimit = await productPrueba.getProducts();
 
-    if (req.query.limit) {
-      resultLimit = resultLimit.slice(0, req.query.limit);
-    }
-
-    res.setHeader("Content-type", "application/json");
-    console.log(`Se establecio un limit de: ${req.query.limit}`)
-    res.json(resultLimit);
-  } catch (error) {
-    res.status(500).json({
-      error: "Error al establecer un límite",
-    });
-  }
-});
-
-router.get('/:pid', async (req, res) => {
+router.get('/id/:pid', async (req, res) => {
   try {
     const id = parseInt(req.params.pid);
     const findIdParams = await productPrueba.getProductById(id);

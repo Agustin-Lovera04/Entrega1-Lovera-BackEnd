@@ -1,21 +1,32 @@
 import express from 'express';
-import { router as productManagerRouter } from './router/products-router.js';
-import { router as cartManagerRouter } from './router/carts-router.js';
+import {engine} from 'express-handlebars'
+import { router as viewsRouter } from './router/viewsRouter.js';
+import { __dirname } from './utils.js';
+import {Server} from 'socket.io'
 
-const PORT=8080;
+
+const PORT=3000;
 
 const app=express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
-app.use('/api/products', productManagerRouter)
-app.use('/api/carts', cartManagerRouter)
+app.use(express.static(`${__dirname}/public`))
 
-app.get('/',(req,res)=>{
-    res.setHeader('Content-Type','text/plain');
-    res.status(200).send('OK');
-})
+/* CONFIGURAMOS HANDLEBARS */
+app.engine('handlebars', engine())
+app.set('view engine', 'handlebars')
+app.set('views', `${__dirname}/views`);
+
+/* MODULARIZAMOS Y REDIRIGIMOS A VIEWSROUTER */
+app.use('/', viewsRouter)
+
 
 const server=app.listen(PORT,()=>{
     console.log(`Server escuchando en puerto ${PORT}`);
 });
+
+
+export const io = new Server(server)
+
+
